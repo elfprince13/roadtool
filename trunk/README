@@ -1,0 +1,66 @@
+General Info
+------------
+This release of RoadTool includes the source for the program, as well as utilities for retrieving and processing the associated data (both input and output).
+
+The primary input, road networks, are read from in the TIGER/Line UA 2k format. Networks for all 50 states can be found with some documentation (as well as tool for merging networks), at time of release, on this site: http://www.dis.uniroma1.it/~challenge9/data/tiger/
+The original data files originate with US Census Bureau and can also be found here: http://www.census.gov/geo/www/tiger/tigerua/ua_tgr2k.html
+
+Scripts are included to process POI data from either Census Bureau TIGER files (including an automated downloader) and generate POI input files for RoadTool. Run "FetchTIGERChurchesAndSchools.py" for more information.
+
+Scripts are also included to process POI data from Garmin CSV files into a format suitable for input to RoadTool. Run "GarminCSVtoRoadToolPOI.py" for more information.
+
+Other script utilities included are for processing and visualization of output data. Some of these require the Python Imaging Library (PIL).
+
+Building
+--------
+RoadTool uses ant (http://ant.apache.org/) as a build tool, and includes a build.xml for ant. It should also be relatively straightforward to compile by hand for somewhere familiar with the JDK. Requires at least Java 1.5, and depends on the Java OpenGL (JOGL) libraries for the built-in map visualization features. A fully assembled jar file is available on the project website, this should run on any platform with JOGL and at least Java 5.
+
+
+Use Notes
+---------
+Assumes RoadTool is assembled into a JAR and that JOGL is available in the current working directory. Modify the specified paths as necessary.
+
+A minimal command line (assuming your classpath to access JOGL has been set via environment variables) to invoke RoadTool and display the help text looks like this:
+	java -jar RoadTool.jar
+
+A more realistic invocation looks something like this:
+	java -d64 -classpath jogl-1.1.1-macosx-universal/lib/jogl.jar:jogl-1.1.1-macosx-universal/lib/gluegen-rt.jar:RoadTool.jar -Xmx8192M RoadTool -i\
+		 data/NH.tmp.gz -p poi/NH-schools.poi -p poi/NH-churches.poi -o serialized/NH-chandsch.stmp -n -m FLATPOL -dA "Religious Institution" \
+		-2 "Educational Institution" > data/NH-chandsch.txt &
+
+The full set of switches for RoadTool are documented here:
+java -jar -Xmx[memory allocation] RoadTool.jar [options] -i inputfile
+-v [0-3]		Set Verbosity. Defaults to 2
+			0 is silent
+			1 is errors only
+			2 is normal
+			3 is chatter
+-o filename		Write serialized RoadGraph to filename
+-r			inputfile is an Internet URL computer
+-s			inputfile is a serialized RoadGraph
+-n			don't attempt to display inputfile
+-p filename		Load POIs from filename
+-dA poiDescription	runs Djikstra and dumps information
+			about POI distribution
+-2 poiDescription	runs Djikstra with a second set
+			of POIs (2 color). Requires -dA
+-d nodenumber		runs Djikstra with nodenumber as root
+-u			dump the Djikstra tree to the console
+			implies -d, by default node is set to 0
+			unless specified otherwise by -d
+			and ignored by -dA
+-t			Use a static radius when
+			analyzing POI distribution
+			ignored if not used with -dA
+-w DISTANCE/TIME	chooses between weighting the graph by DISTANCE
+			and TIME. Defaults to TIME
+-m RECT/FLATPOL		chooses between interpreting coordinates
+			as a grid (FLATPOL) or converting them
+			to rectangular coordinates (RECT)
+
+Java command-line switches of note: 
+-d64 sets 64bit execution mode. This is necessary for large (>4GB) heap sizes.
+-Xmx8192M provides a maximum heap size of 8GB. RoadTool will happily eat whatever memory you throw at it, given a large enough input. 1.5GB-2GB is a minimum realistic allowance for the data set of a small state (VT, RI, HI).
+
+
+For more information on this project, see: Dickerson, Dickerson, Goodrich, and Zhuo; "Round-Trip Voronoi Diagrams and Doubling Density in Geographic Networks"; Trans. on Comput. Sci. XIV, LNCS 6970 (2011): p.211-38. A preprint of this article is available free of charge at: http://arxiv.org/abs/1005.1053
