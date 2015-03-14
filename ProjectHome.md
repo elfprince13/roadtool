@@ -1,0 +1,1 @@
+Tools to analyze the distribution of Points Of Interest on geographic networks for the purpose of efficiently calculating round trips including 2 POI sites of 1 or 2 types.
